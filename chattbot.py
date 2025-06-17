@@ -6,7 +6,7 @@ import os
 from gtts import gTTS
 
 # Load Gemini API key securely (do NOT hardcode in production)
-genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyBoI-KIbYxbThZL9-2q8nqmXnzdTcnzozo"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA"))
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
