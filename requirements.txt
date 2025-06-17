@@ -1,1 +1,8 @@
 
+gradio
+google-generativeai
+SpeechRecognition
+pyaudio
+gtts
+setuptools
+wheel
