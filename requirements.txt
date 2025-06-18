@@ -1,8 +1,7 @@
-
 gradio
 google-generativeai
 SpeechRecognition
 pyaudio
-gtts
+pyttsx3
 setuptools
 wheel
