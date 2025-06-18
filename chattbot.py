@@ -1,10 +1,10 @@
 import gradio as gr
 import google.generativeai as genai
 import os
-from gtts import gTTS
+import pyttsx3
 
 # Load Gemini API key securely from environment variable
-genai.configure(api_key=os.getenv("AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
@@ -18,6 +18,12 @@ Established in 2019, Home.LLC is dedicated to addressing challenges in the housi
 the home ownership crisis in America by streamlining the process of buying, owning, and selling homes for greater efficiency and effectiveness. 
 Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 """
+
+def text_to_speech(answer, audio_path="bot_response.mp3"):
+    engine = pyttsx3.init()
+    engine.save_to_file(answer, audio_path)
+    engine.runAndWait()
+    return audio_path
 
 def chat_with_gemini(audio_file, history=None):
     import speech_recognition as sr
@@ -52,10 +58,8 @@ def chat_with_gemini(audio_file, history=None):
 
     history.append(("Bot", answer))
 
-    # Convert answer to speech
-    tts = gTTS(text=answer, lang='en')
-    audio_path = "bot_response.mp3"
-    tts.save(audio_path)
+    # Convert answer to speech using offline TTS
+    audio_path = text_to_speech(answer)
 
     return answer, audio_path, history
 
@@ -90,13 +94,22 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+
+
+
+
+
 # import gradio as gr
 # import google.generativeai as genai
 # import os
 # from gtts import gTTS
 
-# # Load Gemini API key securely (do NOT hardcode in production)
-# genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA"))
+# # Load Gemini API key securely from environment variable
+# genai.configure(api_key=os.getenv("AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA"))
 
 # model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
@@ -111,11 +124,12 @@ if __name__ == "__main__":
 # Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 # """
 
-# def chat_with_gemini(audio_file, history):
+# def chat_with_gemini(audio_file, history=None):
+#     import speech_recognition as sr
+
 #     if audio_file is None:
 #         return "Please say something!", None, history
 
-#     import speech_recognition as sr
 #     recognizer = sr.Recognizer()
 #     with sr.AudioFile(audio_file) as source:
 #         audio_data = recognizer.record(source)
@@ -124,12 +138,14 @@ if __name__ == "__main__":
 #         except Exception as e:
 #             return f"Speech recognition failed: {e}", None, history
 
-#     history = history or []
+#     if history is None:
+#         history = []
 #     history.append(("User", text))
 
 #     prompt = PERSONA_CONTEXT + "\n"
-#     for human, bot in zip(history[::2], history[1::2]):
-#         prompt += f"User: {human[1]}\nBot: {bot[1]}\n"
+#     # Reconstruct conversation from history
+#     for idx in range(0, len(history) - 1, 2):
+#         prompt += f"User: {history[idx][1]}\nBot: {history[idx+1][1]}\n"
 #     if len(history) % 2 == 1:
 #         prompt += f"User: {history[-1][1]}\nBot:"
 
@@ -168,5 +184,7 @@ if __name__ == "__main__":
 #         server_name="0.0.0.0",
 #         server_port=int(os.environ.get("PORT", 7860))
 #     )
+
+
 
 
