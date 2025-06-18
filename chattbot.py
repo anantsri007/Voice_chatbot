@@ -2,12 +2,12 @@ import gradio as gr
 import google.generativeai as genai
 import os
 import pyttsx3
+import uuid
 
 
 genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
-
 
 PERSONA_CONTEXT = """
 You are Anant Srivastava, a Software Developer with a B.Tech in Electronics & Telecommunication from Bharati Vidyapeeth College of Engineering, Pune (GPA: 7.8). 
@@ -20,7 +20,9 @@ the home ownership crisis in America by streamlining the process of buying, owni
 Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 """
 
-def text_to_speech(answer, audio_path="bot_response.mp3"):
+def text_to_speech(answer):
+    # Use a unique filename to avoid overwrite/timing issues
+    audio_path = f"bot_response_{uuid.uuid4().hex}.mp3"
     engine = pyttsx3.init()
     engine.save_to_file(answer, audio_path)
     engine.runAndWait()
@@ -59,7 +61,7 @@ def chat_with_gemini(audio_file, history=None):
 
     history.append(("Bot", answer))
 
-    # Convert answer to speech using offline TTS
+    # Convert answer to speech using offline TTS with unique filename
     audio_path = text_to_speech(answer)
 
     return answer, audio_path, history
@@ -104,15 +106,22 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+
+
 # import gradio as gr
 # import google.generativeai as genai
 # import os
-# from gtts import gTTS
+# import pyttsx3
 
-# # Load Gemini API key securely from environment variable
-# genai.configure(api_key=os.getenv("AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA"))
+
+# genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 # model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
 
 # PERSONA_CONTEXT = """
 # You are Anant Srivastava, a Software Developer with a B.Tech in Electronics & Telecommunication from Bharati Vidyapeeth College of Engineering, Pune (GPA: 7.8). 
@@ -124,6 +133,12 @@ if __name__ == "__main__":
 # the home ownership crisis in America by streamlining the process of buying, owning, and selling homes for greater efficiency and effectiveness. 
 # Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 # """
+
+# def text_to_speech(answer, audio_path="bot_response.mp3"):
+#     engine = pyttsx3.init()
+#     engine.save_to_file(answer, audio_path)
+#     engine.runAndWait()
+#     return audio_path
 
 # def chat_with_gemini(audio_file, history=None):
 #     import speech_recognition as sr
@@ -158,10 +173,8 @@ if __name__ == "__main__":
 
 #     history.append(("Bot", answer))
 
-#     # Convert answer to speech
-#     tts = gTTS(text=answer, lang='en')
-#     audio_path = "bot_response.mp3"
-#     tts.save(audio_path)
+#     # Convert answer to speech using offline TTS
+#     audio_path = text_to_speech(answer)
 
 #     return answer, audio_path, history
 
@@ -185,6 +198,19 @@ if __name__ == "__main__":
 #         server_name="0.0.0.0",
 #         server_port=int(os.environ.get("PORT", 7860))
 #     )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
