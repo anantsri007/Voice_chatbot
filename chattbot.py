@@ -1,11 +1,11 @@
 import gradio as gr
 import google.generativeai as genai
 import os
-import pyttsx3
+from gtts import gTTS
 import uuid
 
-# Directly use Gemini API key (for demo; use env var in production)
-genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
+# Directly use Gemini API key (not secure for production!)
+genai.configure(api_key="AIzaSyBoI-KIbYxbThZL9-2q8nqmXnzdTcnzozo")
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
@@ -20,21 +20,11 @@ the home ownership crisis in America by streamlining the process of buying, owni
 Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 """
 
-def text_to_speech(answer):
-    import os
-    audio_path = f"/tmp/bot_response_{uuid.uuid4().hex}.wav"
-    engine = pyttsx3.init()
-    engine.save_to_file(answer, audio_path)
-    engine.runAndWait()
-    print("Audio file exists:", os.path.exists(audio_path))
-    return audio_path
-
-def chat_with_gemini(audio_file, history=None):
-    import speech_recognition as sr
-
+def chat_with_gemini(audio_file, history):
     if audio_file is None:
         return "Please say something!", None, history
 
+    import speech_recognition as sr
     recognizer = sr.Recognizer()
     with sr.AudioFile(audio_file) as source:
         audio_data = recognizer.record(source)
@@ -43,14 +33,12 @@ def chat_with_gemini(audio_file, history=None):
         except Exception as e:
             return f"Speech recognition failed: {e}", None, history
 
-    if history is None:
-        history = []
+    history = history or []
     history.append(("User", text))
 
     prompt = PERSONA_CONTEXT + "\n"
-    # Reconstruct conversation from history
-    for idx in range(0, len(history) - 1, 2):
-        prompt += f"User: {history[idx][1]}\nBot: {history[idx+1][1]}\n"
+    for human, bot in zip(history[::2], history[1::2]):
+        prompt += f"User: {human[1]}\nBot: {bot[1]}\n"
     if len(history) % 2 == 1:
         prompt += f"User: {history[-1][1]}\nBot:"
 
@@ -62,8 +50,10 @@ def chat_with_gemini(audio_file, history=None):
 
     history.append(("Bot", answer))
 
-    # Convert answer to speech using offline TTS with unique filename
-    audio_path = text_to_speech(answer)
+    # Convert answer to speech with unique filename to avoid overwrite
+    audio_path = f"/tmp/bot_response_{uuid.uuid4().hex}.mp3"
+    tts = gTTS(text=answer, lang='en')
+    tts.save(audio_path)
 
     return answer, audio_path, history
 
@@ -96,17 +86,13 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
 # import gradio as gr
 # import google.generativeai as genai
 # import os
 # import pyttsx3
 # import uuid
 
-
+# # Directly use Gemini API key (for demo; use env var in production)
 # genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 # model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -123,11 +109,12 @@ if __name__ == "__main__":
 # """
 
 # def text_to_speech(answer):
-#     # Use a unique filename to avoid overwrite/timing issues
-#     audio_path = f"bot_response_{uuid.uuid4().hex}.mp3"
+#     import os
+#     audio_path = f"/tmp/bot_response_{uuid.uuid4().hex}.wav"
 #     engine = pyttsx3.init()
 #     engine.save_to_file(answer, audio_path)
 #     engine.runAndWait()
+#     print("Audio file exists:", os.path.exists(audio_path))
 #     return audio_path
 
 # def chat_with_gemini(audio_file, history=None):
@@ -188,17 +175,6 @@ if __name__ == "__main__":
 #         server_name="0.0.0.0",
 #         server_port=int(os.environ.get("PORT", 7860))
 #     )
-
-
-
-
-
-
-
-
-
-
-
 
 
 
