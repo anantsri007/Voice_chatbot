@@ -4,7 +4,7 @@ import os
 import pyttsx3
 import uuid
 
-
+# Directly use Gemini API key (for demo; use env var in production)
 genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
@@ -21,11 +21,12 @@ Answer all questions confidently and concisely in first person, as if speaking d
 """
 
 def text_to_speech(answer):
-    # Use a unique filename to avoid overwrite/timing issues
-    audio_path = f"bot_response_{uuid.uuid4().hex}.mp3"
+    import os
+    audio_path = f"/tmp/bot_response_{uuid.uuid4().hex}.wav"
     engine = pyttsx3.init()
     engine.save_to_file(answer, audio_path)
     engine.runAndWait()
+    print("Audio file exists:", os.path.exists(audio_path))
     return audio_path
 
 def chat_with_gemini(audio_file, history=None):
@@ -99,29 +100,16 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # import gradio as gr
 # import google.generativeai as genai
 # import os
 # import pyttsx3
+# import uuid
 
 
 # genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 # model = genai.GenerativeModel('gemini-1.5-flash-latest')
-
 
 # PERSONA_CONTEXT = """
 # You are Anant Srivastava, a Software Developer with a B.Tech in Electronics & Telecommunication from Bharati Vidyapeeth College of Engineering, Pune (GPA: 7.8). 
@@ -134,7 +122,9 @@ if __name__ == "__main__":
 # Answer all questions confidently and concisely in first person, as if speaking directly to the CEO.
 # """
 
-# def text_to_speech(answer, audio_path="bot_response.mp3"):
+# def text_to_speech(answer):
+#     # Use a unique filename to avoid overwrite/timing issues
+#     audio_path = f"bot_response_{uuid.uuid4().hex}.mp3"
 #     engine = pyttsx3.init()
 #     engine.save_to_file(answer, audio_path)
 #     engine.runAndWait()
@@ -173,7 +163,7 @@ if __name__ == "__main__":
 
 #     history.append(("Bot", answer))
 
-#     # Convert answer to speech using offline TTS
+#     # Convert answer to speech using offline TTS with unique filename
 #     audio_path = text_to_speech(answer)
 
 #     return answer, audio_path, history
@@ -198,6 +188,11 @@ if __name__ == "__main__":
 #         server_name="0.0.0.0",
 #         server_port=int(os.environ.get("PORT", 7860))
 #     )
+
+
+
+
+
 
 
 
