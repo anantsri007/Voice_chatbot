@@ -3,10 +3,11 @@ import google.generativeai as genai
 import os
 import pyttsx3
 
-# Load Gemini API key securely from environment variable
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+genai.configure(api_key="AIzaSyAyflCfV0xGgQjwKHYv_AZaBUQ5qvhkWkA")
 
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
 
 PERSONA_CONTEXT = """
 You are Anant Srivastava, a Software Developer with a B.Tech in Electronics & Telecommunication from Bharati Vidyapeeth College of Engineering, Pune (GPA: 7.8). 
